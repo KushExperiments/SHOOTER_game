@@ -125,7 +125,7 @@ function loop(){
   updateBullets();
   drawLoot();
   pickupLoot();
-  drawDarkness();
+ // drawDarkness();
   drawUI();
 
   requestAnimationFrame(loop);
@@ -363,6 +363,7 @@ function canSeePlayer(e){
   if(diff>e.visionAngle/2)return false;
   return !rayBlocked(e.x,e.y,player.x,player.y);
 }
+
 
 
 
