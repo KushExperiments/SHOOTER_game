@@ -1,0 +1,60 @@
+body{
+  margin:0;
+  background:#000;
+  overflow:hidden;
+}
+
+canvas{
+  display:block;
+  margin:auto;
+  background:#111;
+}
+
+/* MOBILE UI */
+#mobile-ui{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+#arrows{
+  position:absolute;
+  bottom:40px;
+  left:40px;
+  pointer-events:auto;
+}
+
+#arrows button{
+  width:55px;
+  height:55px;
+  margin:4px;
+  font-size:20px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.3);
+  color:white;
+}
+
+#shootBtn{
+  position:absolute;
+  right:40px;
+  bottom:60px;
+  width:80px;
+  height:80px;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,0,0,0.5);
+  pointer-events:auto;
+}
+
+#shootBtn img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+}
+
+#arrows button:active,
+#shootBtn:active{
+  transform:scale(0.9);
+}
