@@ -1,4 +1,16 @@
 /* ================= SETUP ================= */
+// LOAD DUNGEON MAP IMAGE
+const mapImg = new Image();
+mapImg.src = "dungeon.png";
+
+mapImg.onload = () => {
+  console.log("Dungeon image loaded");
+};
+
+mapImg.onerror = () => {
+  alert("Dungeon image NOT found. Check file name and location.");
+};
+
 const mapImg = new Image();
 mapImg.src = "dungeon.png";
 
@@ -354,5 +366,6 @@ function canSeePlayer(e){
   if(diff>e.visionAngle/2)return false;
   return !rayBlocked(e.x,e.y,player.x,player.y);
 }
+
 
 
