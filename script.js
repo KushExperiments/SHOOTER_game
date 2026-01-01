@@ -1,10 +1,10 @@
 /* ================= SETUP ================= */
 // LOAD DUNGEON MAP IMAGE
 const mapImg = new Image();
-mapImg.src = "dungeon.png";
+mapImg.src = "./dungeon.png";   // ✅ THIS IS THE CORRECT PATH
 
 mapImg.onload = () => {
-  console.log("Dungeon image loaded");
+  console.log("✅ dungeon.png loaded");
 };
 
 mapImg.onerror = () => {
@@ -363,6 +363,7 @@ function canSeePlayer(e){
   if(diff>e.visionAngle/2)return false;
   return !rayBlocked(e.x,e.y,player.x,player.y);
 }
+
 
 
 
