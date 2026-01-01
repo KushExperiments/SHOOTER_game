@@ -1,4 +1,7 @@
 /* ================= SETUP ================= */
+const mapImg = new Image();
+mapImg.src = "dungeon.png";
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -344,3 +347,4 @@ function canSeePlayer(e){
   if(diff>e.visionAngle/2)return false;
   return !rayBlocked(e.x,e.y,player.x,player.y);
 }
+
