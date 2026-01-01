@@ -10,17 +10,19 @@ document.addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);
 document.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
 
 /* ================= MAP ================= */
-const mapImg = new Image();
-mapImg.src = "dungeon.png";
 
 const walls = [
-  {x:60,y:60,w:780,h:30},
-  {x:60,y:60,w:30,h:380},
-  {x:810,y:60,w:30,h:380},
-  {x:60,y:410,w:780,h:30},
-  {x:300,y:60,w:30,h:200},
-  {x:500,y:240,w:30,h:200}
+  // outer walls
+  { x:60,  y:60,  w:780, h:30 },
+  { x:60,  y:60,  w:30,  h:380 },
+  { x:810, y:60,  w:30,  h:380 },
+  { x:60,  y:410, w:780, h:30 },
+
+  // inner dungeon walls
+  { x:300, y:60,  w:30,  h:200 },
+  { x:500, y:240, w:30,  h:200 }
 ];
+
 
 const doors = [
   {x:300,y:260,w:30,h:40,open:false,locked:true}
@@ -93,7 +95,12 @@ document.getElementById("shootBtn")
 function loop(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  drawMap();
+  function drawMap(){
+  if(mapImg.complete){
+    ctx.drawImage(mapImg, 0, 0, canvas.width, canvas.height);
+  }
+}
+
   drawWalls();
   drawDoors();
 
@@ -347,4 +354,5 @@ function canSeePlayer(e){
   if(diff>e.visionAngle/2)return false;
   return !rayBlocked(e.x,e.y,player.x,player.y);
 }
+
 
