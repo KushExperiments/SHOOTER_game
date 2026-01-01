@@ -1,4 +1,14 @@
 /* ================= SETUP ================= */
+window.onload = () => {
+  const img = new Image();
+  img.src = "./dungeon.png";
+  img.onload = () => {
+    const c = document.getElementById("game");
+    const ctx = c.getContext("2d");
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+  };
+};
+
 // LOAD DUNGEON MAP IMAGE
 const mapImg = new Image();
 mapImg.src = "./dungeon.png";   // ✅ THIS IS THE CORRECT PATH
@@ -109,7 +119,7 @@ function loop(){
     ctx.drawImage(mapImg, 0, 0, canvas.width, canvas.height);
   }
 }
-
+  drawMaps();
   drawWalls();
   drawDoors();
 
@@ -275,7 +285,14 @@ function pickupLoot(){
 
 /* ================= HELPERS ================= */
 function drawMap(){
-  if(mapImg.complete)ctx.drawImage(mapImg,0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "blue";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if(mapImg.complete){
+    ctx.drawImage(mapImg, 0, 0, canvas.width, canvas.height);
+  }
+}
+
 }
 function drawWalls(){walls.forEach(w=>ctx.fillRect(w.x,w.y,w.w,w.h));}
 function drawDoors(){
@@ -363,6 +380,7 @@ function canSeePlayer(e){
   if(diff>e.visionAngle/2)return false;
   return !rayBlocked(e.x,e.y,player.x,player.y);
 }
+
 
 
 
