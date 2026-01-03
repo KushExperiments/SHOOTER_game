@@ -2,29 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top Down Stealth Shooter</title>
+  <title>Top Down Shooter</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <canvas id="game" width="800" height="450"></canvas>
 
-<canvas id="game" width="900" height="500"></canvas>
-
-<!-- MOBILE UI -->
-<div id="mobile-ui">
-  <div id="arrows">
-    <button id="up">▲</button>
+  <div id="controls">
+    <button id="up">↑</button>
     <div>
-      <button id="left">◀</button>
-      <button id="down">▼</button>
-      <button id="right">▶</button>
+      <button id="left">←</button>
+      <button id="down">↓</button>
+      <button id="right">→</button>
     </div>
+    <button id="shoot">SHOOT</button>
   </div>
 
-<button id="shootBtn">SHOOT</button>
-
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
 
