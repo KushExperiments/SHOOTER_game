@@ -42,7 +42,7 @@ const enemyTypes = {
   ghost: { img: "enemy_ghost.png", speed: 1.2, hp: 2 },
   spider: { img: "enemy_spider.png", speed: 2, hp: 1 },
   soldier: { img: "enemy_soldier.png", speed: 1, hp: 4 },
-  oneeyed: { img: "enemy_oneyed.png", speed: 1.5, hp: 3 }
+  oneyed: { img: "enemy_oneyed.png", speed: 1.5, hp: 3 }
 };
 
 const enemyImages = {};
@@ -210,4 +210,5 @@ function loop() {
 }
 
 loop();
+
 
