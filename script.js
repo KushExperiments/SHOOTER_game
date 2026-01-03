@@ -1,179 +1,212 @@
+// ======================
+// CANVAS SETUP
+// ======================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-// MAP
-const mapImg = new Image();
-mapImg.src = "dungeon.png";
-
-// PLAYER
-const playerImg = new Image();
-playerImg.src = "player.png";
-
-const player = {
-  x: 100,
-  y: 100,
-  speed: 2,
-  angle: 0
+// ======================
+// PLAYER TYPES
+// ======================
+const playerTypes = {
+  player: { img: "player.png", speed: 2.5, maxHp: 100 },
+  slasher: { img: "slasher.png", speed: 3, maxHp: 80 },
+  superslayer: { img: "superslayer.png", speed: 2, maxHp: 150 }
 };
 
-// ENEMY IMAGES
-const enemyImages = {
-  skeleton: new Image(),
-  goblin: new Image(),
-  slime: new Image()
+const playerImages = {};
+for (let p in playerTypes) {
+  playerImages[p] = new Image();
+  playerImages[p].src = playerTypes[p].img;
+}
+
+// ======================
+// WEAPONS
+// ======================
+const weapons = {
+  sword: { img: "sword.png", range: 50, damage: 2, cooldown: 25 },
+  knife: { img: "knife.png", range: 30, damage: 1, cooldown: 12 },
+  thorhammer: { img: "thorhammer.png", range: 60, damage: 4, cooldown: 40 },
+  woodslasher: { img: "woodslasher.png", range: 45, damage: 3, cooldown: 30 }
 };
 
-enemyImages.skeleton.src = "enemy_skeleton.png";
-enemyImages.goblin.src   = "enemy_goblin.png";
-enemyImages.slime.src    = "enemy_slime.png";
+const weaponImages = {};
+for (let w in weapons) {
+  weaponImages[w] = new Image();
+  weaponImages[w].src = weapons[w].img;
+}
 
-// ENEMY ANIMATIONS
-const enemyAnim = {
-  skeleton: { fall: 1.2, spin: 0.2, fade: 0.04, shrink: false },
-  goblin:   { fall: 0.6, spin: 0.1, fade: 0.03, shrink: false },
-  slime:    { fall: 0.3, spin: 0,   fade: 0.03, shrink: true  }
+// ======================
+// ENEMY TYPES
+// ======================
+const enemyTypes = {
+  ghost: { img: "enemy_ghost.png", speed: 1.2, hp: 2 },
+  spider: { img: "enemy_spider.png", speed: 2, hp: 1 },
+  soldier: { img: "enemy_soldier.png", speed: 1, hp: 4 },
+  oneeyed: { img: "enemy_oneeyed.png", speed: 1.5, hp: 3 }
+};
+
+const enemyImages = {};
+for (let e in enemyTypes) {
+  enemyImages[e] = new Image();
+  enemyImages[e].src = enemyTypes[e].img;
+}
+
+// ======================
+// GAME STATE
+// ======================
+let player = {
+  type: "player",
+  x: 150,
+  y: 150,
+  hp: 100,
+  weapon: "sword",
+  attackCooldown: 0
 };
 
 let enemies = [];
-let bullets = [];
 
-// SPAWN ENEMIES
+// ======================
+// SPAWN ENEMY
+// ======================
 function spawnEnemy(x, y) {
-  const types = ["skeleton","goblin","slime"];
-  const type = types[Math.floor(Math.random()*types.length)];
+  const types = Object.keys(enemyTypes);
+  const type = types[Math.floor(Math.random() * types.length)];
 
   enemies.push({
-    x, y,
+    x,
+    y,
     type,
-    hp: 3,
+    hp: enemyTypes[type].hp,
+    speed: enemyTypes[type].speed,
     alive: true,
     dying: false,
     opacity: 1,
-    scale: 1,
     angle: 0,
-    timer: 30,
+    scale: 1,
+    hitFlash: 0,
     remove: false
   });
 }
 
-spawnEnemy(500,150);
-spawnEnemy(600,300);
-spawnEnemy(400,250);
+// spawn some enemies
+spawnEnemy(400, 200);
+spawnEnemy(550, 300);
+spawnEnemy(300, 350);
 
+// ======================
 // INPUT
+// ======================
 const keys = {};
 document.addEventListener("keydown", e => keys[e.key] = true);
 document.addEventListener("keyup", e => keys[e.key] = false);
 
-// MOBILE BUTTONS
-["up","down","left","right"].forEach(id=>{
-  document.getElementById(id).onclick = ()=> keys[id] = true;
-  document.getElementById(id).onmouseup = ()=> keys[id] = false;
-});
+document.getElementById("shoot").onclick = attack;
 
-document.getElementById("shoot").onclick = shoot;
+// ======================
+// ATTACK (MELEE)
+// ======================
+function attack() {
+  const w = weapons[player.weapon];
+  if (player.attackCooldown > 0) return;
 
-// SHOOT
-function shoot(){
-  bullets.push({
-    x: player.x,
-    y: player.y,
-    vx: Math.cos(player.angle) * 5,
-    vy: Math.sin(player.angle) * 5
+  player.attackCooldown = w.cooldown;
+
+  enemies.forEach(e => {
+    if (!e.alive) return;
+
+    const dx = e.x - player.x;
+    const dy = e.y - player.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < w.range) {
+      e.hp -= w.damage;
+      e.hitFlash = 6;
+
+      if (e.hp <= 0) {
+        e.alive = false;
+        e.dying = true;
+      }
+    }
   });
 }
 
+// ======================
 // UPDATE
-function update(){
-  if(keys["ArrowUp"] || keys.up) player.y -= player.speed;
-  if(keys["ArrowDown"] || keys.down) player.y += player.speed;
-  if(keys["ArrowLeft"] || keys.left) player.x -= player.speed;
-  if(keys["ArrowRight"] || keys.right) player.x += player.speed;
+// ======================
+function update() {
+  const speed = playerTypes[player.type].speed;
 
-  bullets.forEach(b=>{
-    b.x += b.vx;
-    b.y += b.vy;
-  });
+  if (keys["ArrowUp"]) player.y -= speed;
+  if (keys["ArrowDown"]) player.y += speed;
+  if (keys["ArrowLeft"]) player.x -= speed;
+  if (keys["ArrowRight"]) player.x += speed;
 
-  enemies.forEach(e=>{
-    if(e.dying){
-      const a = enemyAnim[e.type];
-      e.y += a.fall;
-      e.angle += a.spin;
-      e.opacity -= a.fade;
-      if(a.shrink) e.scale -= 0.02;
-      e.timer--;
-      if(e.timer <= 0) e.remove = true;
+  if (player.attackCooldown > 0) player.attackCooldown--;
+
+  enemies.forEach(e => {
+    if (e.dying) {
+      e.opacity -= 0.04;
+      e.y += 0.5;
+      e.angle += 0.15;
+      if (e.opacity <= 0) e.remove = true;
       return;
     }
 
+    // chase player
     const dx = player.x - e.x;
     const dy = player.y - e.y;
-    const dist = Math.hypot(dx,dy);
+    const d = Math.hypot(dx, dy);
 
-    if(dist < 150){
-      e.x += dx/dist;
-      e.y += dy/dist;
+    if (d < 160) {
+      e.x += (dx / d) * e.speed;
+      e.y += (dy / d) * e.speed;
     }
   });
 
-  bullets.forEach(b=>{
-    enemies.forEach(e=>{
-      if(!e.alive) return;
-      if(Math.hypot(b.x-e.x,b.y-e.y) < 12){
-        e.hp--;
-        b.remove = true;
-        if(e.hp <= 0){
-          e.alive = false;
-          e.dying = true;
-        }
-      }
-    });
-  });
-
-  bullets = bullets.filter(b=>!b.remove);
-  enemies = enemies.filter(e=>!e.remove);
+  enemies = enemies.filter(e => !e.remove);
 }
 
+// ======================
 // DRAW
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+// ======================
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if(mapImg.complete){
-    ctx.drawImage(mapImg,0,0,canvas.width,canvas.height);
+  // PLAYER
+  const pImg = playerImages[player.type];
+  if (pImg.complete) {
+    ctx.drawImage(pImg, player.x - 16, player.y - 16, 32, 32);
   }
 
-  bullets.forEach(b=>{
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(b.x,b.y,4,4);
-  });
+  // WEAPON
+  const wImg = weaponImages[player.weapon];
+  if (wImg.complete) {
+    ctx.drawImage(wImg, player.x + 10, player.y - 8, 16, 16);
+  }
 
-  enemies.forEach(e=>{
+  // ENEMIES
+  enemies.forEach(e => {
     const img = enemyImages[e.type];
-    if(!img.complete) return;
-    ctx.save();
-    ctx.globalAlpha = e.opacity;
-    ctx.translate(e.x,e.y);
-    ctx.rotate(e.angle);
-    ctx.scale(e.scale,e.scale);
-    ctx.drawImage(img,-12,-12,24,24);
-    ctx.restore();
-  });
+    if (!img.complete) return;
 
-  if(playerImg.complete){
     ctx.save();
-    ctx.translate(player.x,player.y);
-    ctx.drawImage(playerImg,-16,-16,32,32);
+    ctx.globalAlpha = e.hitFlash > 0 ? 0.5 : e.opacity;
+    ctx.translate(e.x, e.y);
+    ctx.rotate(e.angle);
+    ctx.drawImage(img, -12, -12, 24, 24);
     ctx.restore();
-  }
+
+    if (e.hitFlash > 0) e.hitFlash--;
+  });
 }
 
-// LOOP
-function loop(){
+// ======================
+// GAME LOOP
+// ======================
+function loop() {
   update();
   draw();
   requestAnimationFrame(loop);
 }
 
 loop();
-
