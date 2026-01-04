@@ -11,8 +11,7 @@ canvas.height = 450;
 // MAP
 // =====================
 const mapImg = new Image();
-mapImg.src = "dungeon.png";
-
+mapImg.src = "dungeon.png"
 // =====================
 // PLAYER
 // =====================
@@ -131,3 +130,4 @@ function loop() {
 }
 
 loop();
+
