@@ -11,8 +11,9 @@ mapImg.onload = () => {
 };
 
 mapImg.onerror = () => {
-  console.error("Dungeon failed to load");
+  console.error("Dungeon image failed to load");
 };
+
 
 // =====================
 // PLAYER
@@ -125,6 +126,7 @@ function loop() {
 }
 
 loop();
+
 
 
 
