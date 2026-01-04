@@ -1,55 +1,66 @@
 // =====================
-// CANVAS
+// GET CANVAS (THIS WAS MISSING)
 // =====================
-const mapImg = new Image();
-mapImg.src = "dungeon.png";
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
+// =====================
+// IMAGE LOADER (SAFE)
+// =====================
+function loadImage(src) {
+  const img = new Image();
+  img.src = src;
+  img.loaded = false;
+
+  img.onload = () => {
+    img.loaded = true;
+    console.log("Loaded:", src);
+  };
+
+  img.onerror = () => {
+    console.error("FAILED TO LOAD:", src);
+  };
+
+  return img;
+}
+
+// =====================
+// LOAD ASSETS
+// =====================
+const mapImg = loadImage("dungeon.png");
+const playerImg = loadImage("player.png");
+const enemyImg = loadImage("enemy_spider.png");
+
+// Resize canvas to map size when ready
 mapImg.onload = () => {
   canvas.width = mapImg.width;
   canvas.height = mapImg.height;
-  console.log("Dungeon loaded:", mapImg.width, mapImg.height);
+  console.log("Dungeon size:", mapImg.width, mapImg.height);
 };
-
-mapImg.onerror = () => {
-  console.error("Dungeon image failed to load");
-};
-
 
 // =====================
 // PLAYER
 // =====================
-const playerImg = new Image();
-playerImg.src = "player.png";
-
 const player = {
-  x: 400,
-  y: 225,
-  speed: 3,
-  attackCooldown: 0
+  x: 100,
+  y: 100,
+  speed: 3
 };
 
 // =====================
 // ENEMIES
 // =====================
-const enemyImg = new Image();
-enemyImg.src = "enemy_spider.png";
-
-let enemies = [
-  { x: 200, y: 150, alive: true },
-  { x: 600, y: 300, alive: true }
+const enemies = [
+  { x: 300, y: 200 },
+  { x: 500, y: 350 }
 ];
 
 // =====================
-// INPUT STATE (FIXED)
+// INPUT
 // =====================
-const input = {
-  up: false,
-  down: false,
-  left: false,
-  right: false
-};
+const input = { up:false, down:false, left:false, right:false };
 
-// KEYBOARD
+// Keyboard
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowUp") input.up = true;
   if (e.key === "ArrowDown") input.down = true;
@@ -64,14 +75,10 @@ document.addEventListener("keyup", e => {
   if (e.key === "ArrowRight") input.right = false;
 });
 
-// ON-SCREEN BUTTONS (IMPORTANT)
+// Mobile buttons
 ["up","down","left","right"].forEach(dir => {
   const btn = document.getElementById(dir);
   if (!btn) return;
-
-  btn.addEventListener("mousedown", () => input[dir] = true);
-  btn.addEventListener("mouseup", () => input[dir] = false);
-  btn.addEventListener("mouseleave", () => input[dir] = false);
 
   btn.addEventListener("touchstart", e => {
     e.preventDefault();
@@ -90,7 +97,7 @@ function update() {
   if (input.left) player.x -= player.speed;
   if (input.right) player.x += player.speed;
 
-  // Keep player inside screen
+  // keep inside map
   player.x = Math.max(16, Math.min(canvas.width - 16, player.x));
   player.y = Math.max(16, Math.min(canvas.height - 16, player.y));
 }
@@ -101,27 +108,29 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // DRAW MAP
-  if (mapImg.complete && mapImg.naturalWidth > 0) {
+  // Map
+  if (mapImg.loaded) {
     ctx.drawImage(mapImg, 0, 0);
   } else {
     ctx.fillStyle = "#222";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  // PLAYER
-  ctx.drawImage(playerImg, player.x - 16, player.y - 16, 32, 32);
+  // Player
+  if (playerImg.loaded) {
+    ctx.drawImage(playerImg, player.x - 16, player.y - 16, 32, 32);
+  }
 
-  // ENEMIES
+  // Enemies
   enemies.forEach(e => {
-    ctx.drawImage(enemyImg, e.x - 12, e.y - 12, 24, 24);
+    if (enemyImg.loaded) {
+      ctx.drawImage(enemyImg, e.x - 12, e.y - 12, 24, 24);
+    }
   });
 }
 
-
-
 // =====================
-// GAME LOOP
+// LOOP
 // =====================
 function loop() {
   update();
@@ -130,8 +139,3 @@ function loop() {
 }
 
 loop();
-
-
-
-
-
