@@ -101,19 +101,23 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // DRAW MAP
   if (mapImg.complete && mapImg.naturalWidth > 0) {
     ctx.drawImage(mapImg, 0, 0);
   } else {
-    ctx.fillStyle = "#333";
+    ctx.fillStyle = "#222";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
+  // PLAYER
   ctx.drawImage(playerImg, player.x - 16, player.y - 16, 32, 32);
 
+  // ENEMIES
   enemies.forEach(e => {
     ctx.drawImage(enemyImg, e.x - 12, e.y - 12, 24, 24);
   });
 }
+
 
 
 // =====================
@@ -126,6 +130,7 @@ function loop() {
 }
 
 loop();
+
 
 
 
