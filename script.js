@@ -100,27 +100,20 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // MAP (THIS WAS MISSING BEFORE)
-  if (mapImg.complete) {
-    ctx.drawImage(mapImg, 0, 0, canvas.width, canvas.height);
+  if (mapImg.complete && mapImg.naturalWidth > 0) {
+    ctx.drawImage(mapImg, 0, 0);
   } else {
-    ctx.fillStyle = "#111";
+    ctx.fillStyle = "#333";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  // PLAYER
-  if (playerImg.complete) {
-    ctx.drawImage(playerImg, player.x - 16, player.y - 16, 32, 32);
-  }
+  ctx.drawImage(playerImg, player.x - 16, player.y - 16, 32, 32);
 
-  // ENEMIES
   enemies.forEach(e => {
-    if (!e.alive) return;
-    if (enemyImg.complete) {
-      ctx.drawImage(enemyImg, e.x - 12, e.y - 12, 24, 24);
-    }
+    ctx.drawImage(enemyImg, e.x - 12, e.y - 12, 24, 24);
   });
 }
+
 
 // =====================
 // GAME LOOP
@@ -132,5 +125,6 @@ function loop() {
 }
 
 loop();
+
 
 
