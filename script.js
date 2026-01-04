@@ -1,17 +1,19 @@
 // =====================
 // CANVAS
 // =====================
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-canvas.width = 800;
-canvas.height = 450;
-
-// =====================
-// MAP
-// =====================
 const mapImg = new Image();
-mapImg.src = "dungeon.png"
+mapImg.src = "dungeon.png";
+
+mapImg.onload = () => {
+  canvas.width = mapImg.width;
+  canvas.height = mapImg.height;
+  console.log("Dungeon loaded:", mapImg.width, mapImg.height);
+};
+
+mapImg.onerror = () => {
+  console.error("Dungeon failed to load");
+};
+
 // =====================
 // PLAYER
 // =====================
@@ -130,4 +132,5 @@ function loop() {
 }
 
 loop();
+
 
